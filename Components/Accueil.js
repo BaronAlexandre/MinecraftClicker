@@ -1,18 +1,22 @@
-import React, { Component, useState } from 'react';
+import React from 'react';
 import { Image, View, StyleSheet, ImageBackground, Text } from "react-native";
 import { MultiTouchView } from "expo-multi-touch";
 import Profile from "../Helpers/Profile";
 import * as Font from "expo-font";
+import AsyncStorage from '@react-native-community/async-storage';
+
+var toClass = function(obj, proto) {
+  obj.__proto__ = proto;
+  return obj;}
 
 class Accueil extends React.Component {
   state = {
     touches: {},
   };
-  account;
-  
+  account = new Profile('', '', 0);
+
   constructor(props) {
     super(props);
-    this.account = new Profile("Alexandre", "Baron", 22);
   }
 
   touchProps = {
@@ -26,7 +30,7 @@ class Accueil extends React.Component {
       }));
     },
     onTouchEnded: (event) => {
-      this.account.points++;
+      this.account.increment();
       this.setState((previous) => ({
         touches: {
           ...previous.touches,
@@ -47,7 +51,16 @@ class Accueil extends React.Component {
     await Font.loadAsync({
       'Minecraft': require('../assets/fonts/Minecraft.ttf')
     })
-    this.setState({ fontLoaded: true })
+    await AsyncStorage.getItem("minecraftProfile").then((value) => {
+      profile = toClass(JSON.parse(value), Profile.prototype);
+      if(!profile){
+        profile = new Profile("Jeb", "Bergensten", 41);
+        AsyncStorage.setItem("minecraftProfile", JSON.stringify(profile));
+      }
+      this.setState({account : profile})
+    });
+    this.account = profile;
+    this.setState({ fontLoaded: true });
   }
 
   render() {

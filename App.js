@@ -1,15 +1,14 @@
-// Navigation/Navigation.js
-
-import React from "react"; // N'oubliez pas l'import de React ici. On en a besoin pour rendre nos components React Native Image !
+import React from "react";
 import { StyleSheet, Image } from "react-native";
 import { createAppContainer } from "react-navigation";
 import { createBottomTabNavigator } from "react-navigation-tabs";
 import Store from "./Components/Store";
 import Accueil from "./Components/Accueil";
+import Profile from "./Components/Profile";
 
-const MoviesTabNavigator = createBottomTabNavigator(
+const MinecraftClicker = createBottomTabNavigator(
   {
-    Search: {
+    Accueil: {
       screen: Accueil,
       navigationOptions: {
         tabBarIcon: () => {
@@ -22,7 +21,7 @@ const MoviesTabNavigator = createBottomTabNavigator(
         },
       },
     },
-    Accueil: {
+    Store: {
       screen: Store,
       navigationOptions: {
         tabBarIcon: () => {
@@ -36,7 +35,7 @@ const MoviesTabNavigator = createBottomTabNavigator(
       },
     },
     Profile: {
-      screen: Store,
+      screen: Profile,
       navigationOptions: {
         tabBarIcon: () => {
           return (
@@ -66,4 +65,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createAppContainer(MoviesTabNavigator);
+export default createAppContainer(MinecraftClicker);

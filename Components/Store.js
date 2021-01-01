@@ -4,7 +4,6 @@ import {
   Image,
   View,
   StyleSheet,
-  TouchableWithoutFeedback,
   TouchableOpacity,
   Text,
 } from "react-native";
@@ -12,8 +11,12 @@ import * as Items from "../Helpers/Items";
 import * as Font from "expo-font";
 import { ScrollView } from "react-native-gesture-handler";
 import AwesomeAlert from 'react-native-awesome-alerts';
-import { colors } from "react-native-elements";
+import AsyncStorage from '@react-native-community/async-storage';
 
+var toClass = function(obj, proto) {
+  obj.__proto__ = proto;
+  return obj;
+}
 
 const pickaxes = Items.PICKAXES;
 const ressources = Items.RESSOURCES;
@@ -22,15 +25,17 @@ export default class Store extends Component {
   state = {};
   account;
   
-  buyPickaxe(prix){
+  buyPickaxe = (prix) => {
     if(this.account.points >= prix){
+      console.log('oui');
       this.showAlertBuyPickaxe();
     }else{
+      console.log('non');
       this.showAlertCantBuyPickaxe();
     }
   }
   
-  buyRessource(prix){
+  buyRessource = (prix) => {
     if(this.account.points >= prix){
       this.showAlertBuyRessource();
     }else{
@@ -54,52 +59,85 @@ export default class Store extends Component {
       Minecraft: require("../assets/fonts/Minecraft.ttf"),
       MinecraftTitle: require("../assets/fonts/Minecrafter.Alt.ttf"),
     });
+    await AsyncStorage.getItem("minecraftProfile").then((value) => {
+      profile = toClass(JSON.parse(value), Profile.prototype);
+      if(!profile){
+        profile = new Profile("Jeb", "Bergensten", 41);
+        AsyncStorage.setItem("minecraftProfile", JSON.stringify(profile));
+      }
+      this.setState({account : profile})
+    });
+    this.account = profile;
     this.setState({ fontLoaded: true });
   };
 
 
   showAlertCantBuyPickaxe = () => {
     this.setState({
-      showAlertCantBuyPickaxe: true
+      showAlertBuyPickaxe: false,
+      showAlertCantBuyPickaxe: true,
+      showAlertCantBuyRessource: false,
+      showAlertBuyRessource: false,
     });
   };
   showAlertBuyPickaxe = () => {
     this.setState({
-      showAlertBuyPickaxe: true
+      showAlertBuyPickaxe: true,
+      showAlertCantBuyPickaxe: false,
+      showAlertCantBuyRessource: false,
+      showAlertBuyRessource: false,
     });
   };
 
   hideAlertCantBuyPickaxe = () => {
     this.setState({
-      showAlertCantBuyPickaxe: false
+      showAlertBuyPickaxe: false,
+      showAlertCantBuyPickaxe: false,
+      showAlertCantBuyRessource: false,
+      showAlertBuyRessource: false,
     });
   };
   hideAlertBuyPickaxe = () => {
     this.setState({
-      showAlertBuyPickaxe: false
+      showAlertBuyPickaxe: false,
+      showAlertCantBuyPickaxe: false,
+      showAlertCantBuyRessource: false,
+      showAlertBuyRessource: false,
     });
   };
 
 
   showAlertCantBuyRessource = () => {
     this.setState({
-      showAlertCantBuyRessource: true
+      showAlertBuyPickaxe: false,
+      showAlertCantBuyPickaxe: false,
+      showAlertCantBuyRessource: true,
+      showAlertBuyRessource: false,
     });
   };
   showAlertBuyRessource = () => {
     this.setState({
-      showAlertBuyRessource: true
+      showAlertBuyPickaxe: false,
+      showAlertCantBuyPickaxe: false,
+      showAlertCantBuyRessource: false,
+      showAlertBuyRessource: true,
     });
   };
 
   hideAlertCantBuyRessource = () => {
     this.setState({
-      showAlertCantBuyRessource: false
+      showAlertBuyPickaxe: false,
+      showAlertCantBuyPickaxe: false,
+      showAlertCantBuyRessource: false,
+      showAlertBuyRessource: false,
     });
   };
   hideAlertBuyRessource = () => {
     this.setState({
-      showAlertBuyRessource: false
+      showAlertBuyPickaxe: false,
+      showAlertCantBuyPickaxe: false,
+      showAlertCantBuyRessource: false,
+      showAlertBuyRessource: false,
     });
   };
 
